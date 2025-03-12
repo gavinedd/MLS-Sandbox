@@ -6,7 +6,7 @@ import ListingDetailModal from '../components/ListingDetailModal';
 import ListingSearch from '../components/ListingSearch';
 import ListingForm from '../components/ListingForm';
 import type { Listing } from '../types/Listing';
-import { getListings, searchListings, createListing } from '../services/listingService';
+import { getListings, searchListings, createListing, updateListing, deleteListing } from '../services/listingService';
 
 interface SearchCriteriaType {
   city: string;
@@ -20,6 +20,10 @@ const ListingsPage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [listingToEdit, setListingToEdit] = useState<Listing | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState<Listing | null>(null);
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteriaType>({
     city: '',
     minPrice: '',
@@ -78,21 +82,64 @@ const ListingsPage: React.FC = () => {
   };
 
   const handleAddListingClick = (): void => {
+    setIsEditMode(false);
+    setListingToEdit(null);
     setIsFormOpen(true);
+  };
+
+  const handleEditListing = (listing: Listing): void => {
+    setIsEditMode(true);
+    setListingToEdit(listing);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteListing = (listing: Listing): void => {
+    setListingToDelete(listing);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async (): Promise<void> => {
+    if (listingToDelete?.id) {
+      try {
+        await deleteListing(listingToDelete.id);
+        setIsDeleteConfirmOpen(false);
+        setListingToDelete(null);
+        // Refetch listings to update the UI
+        refetch();
+      } catch (error) {
+        console.error('Error deleting listing:', error);
+        // You could add error handling UI here
+      }
+    }
+  };
+
+  const cancelDelete = (): void => {
+    setIsDeleteConfirmOpen(false);
+    setListingToDelete(null);
   };
 
   const handleFormCancel = (): void => {
     setIsFormOpen(false);
+    setIsEditMode(false);
+    setListingToEdit(null);
   };
 
   const handleFormSubmit = async (listingData: Omit<Listing, 'id'>): Promise<void> => {
     try {
-      await createListing(listingData);
+      if (isEditMode && listingToEdit?.id) {
+        // Update existing listing
+        await updateListing(listingToEdit.id, listingData);
+      } else {
+        // Create new listing
+        await createListing(listingData);
+      }
       setIsFormOpen(false);
-      // Refetch listings to show the new one
+      setIsEditMode(false);
+      setListingToEdit(null);
+      // Refetch listings to show the changes
       refetch();
     } catch (error) {
-      console.error('Error creating listing:', error);
+      console.error('Error saving listing:', error);
       // You could add error handling UI here
     }
   };
@@ -146,6 +193,8 @@ const ListingsPage: React.FC = () => {
               key={listing.id || Math.random().toString()}
               listing={listing}
               onClick={handleCardClick}
+              onEdit={handleEditListing}
+              onDelete={handleDeleteListing}
             />
           ))}
         </div>
@@ -164,9 +213,34 @@ const ListingsPage: React.FC = () => {
           <div className="bg-base-100 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-1">
               <ListingForm
+                initialData={isEditMode ? listingToEdit || {} : {}}
                 onSubmit={handleFormSubmit}
                 onCancel={handleFormCancel}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirm Deletion</h3>
+            <p className="py-4">
+              Are you sure you want to delete the listing at{' '}
+              <span className="font-semibold">
+                {listingToDelete?.streetAddress}, {listingToDelete?.city}
+              </span>
+              ? This action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button className="btn btn-outline" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button className="btn btn-error" onClick={confirmDelete}>
+                Delete
+              </button>
             </div>
           </div>
         </div>

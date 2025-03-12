@@ -4,9 +4,16 @@ import { type Listing } from '../types/Listing';
 interface ListingCardProps {
   listing: Listing;
   onClick: (listing: Listing) => void;
+  onEdit?: (listing: Listing) => void;
+  onDelete?: (listing: Listing) => void;
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ 
+  listing, 
+  onClick, 
+  onEdit, 
+  onDelete 
+}) => {
   // Format price with commas
   const formatPrice = (price?: number): string => {
     if (price === undefined || price === null) {
@@ -70,7 +77,31 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) => {
           <span className="badge badge-outline mr-1">{listing.propertyType || 'Unknown'}</span>
           {listing.yearBuilt && <span className="badge badge-outline">Built {listing.yearBuilt}</span>}
         </div>
-        <div className="card-actions justify-end mt-4">
+        <div className="card-actions justify-between mt-4">
+          <div className="flex space-x-2">
+            {onEdit && (
+              <button
+                className="btn btn-sm btn-outline btn-info"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(listing);
+                }}
+              >
+                Edit
+              </button>
+            )}
+            {onDelete && (
+              <button
+                className="btn btn-sm btn-outline btn-error"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(listing);
+                }}
+              >
+                Delete
+              </button>
+            )}
+          </div>
           <button
             className="btn btn-primary"
             onClick={() => { onClick(listing); }}
