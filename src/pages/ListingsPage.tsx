@@ -4,8 +4,9 @@ import { useQuery } from 'react-query';
 import ListingCard from '../components/ListingCard';
 import ListingDetailModal from '../components/ListingDetailModal';
 import ListingSearch from '../components/ListingSearch';
+import ListingForm from '../components/ListingForm';
 import type { Listing } from '../types/Listing';
-import { getListings, searchListings } from '../services/listingService';
+import { getListings, searchListings, createListing } from '../services/listingService';
 
 interface SearchCriteriaType {
   city: string;
@@ -18,6 +19,7 @@ interface SearchCriteriaType {
 const ListingsPage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteriaType>({
     city: '',
     minPrice: '',
@@ -27,7 +29,7 @@ const ListingsPage: React.FC = () => {
   });
 
   // Fetch listings with react-query
-  const { data: listings, isLoading, isError } = useQuery<Listing[]>(
+  const { data: listings, isLoading, isError, refetch } = useQuery<Listing[]>(
     ['listings', searchCriteria],
     async () => {
       // If no search criteria are set, fetch all listings
@@ -75,11 +77,36 @@ const ListingsPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const handleAddListingClick = (): void => {
+    setIsFormOpen(true);
+  };
+
+  const handleFormCancel = (): void => {
+    setIsFormOpen(false);
+  };
+
+  const handleFormSubmit = async (listingData: Omit<Listing, 'id'>): Promise<void> => {
+    try {
+      await createListing(listingData);
+      setIsFormOpen(false);
+      // Refetch listings to show the new one
+      refetch();
+    } catch (error) {
+      console.error('Error creating listing:', error);
+      // You could add error handling UI here
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
         <h1 className="text-3xl font-bold mb-4 md:mb-0">Property Listings</h1>
-        <button className="btn btn-primary">Add Listing</button>
+        <button 
+          className="btn btn-primary"
+          onClick={handleAddListingClick}
+        >
+          Add Listing
+        </button>
       </div>
 
       {/* Search Component */}
@@ -130,6 +157,20 @@ const ListingsPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
       />
+
+      {/* Add/Edit Listing Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-base-100 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-1">
+              <ListingForm
+                onSubmit={handleFormSubmit}
+                onCancel={handleFormCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
