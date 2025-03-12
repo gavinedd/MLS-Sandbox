@@ -36,6 +36,7 @@ const ListingsPage: React.FC = () => {
   const { data: listings, isLoading, isError, refetch } = useQuery<Listing[]>(
     ['listings', searchCriteria],
     async () => {
+      console.log('Executing query with search criteria:', searchCriteria);
       // If no search criteria are set, fetch all listings
       if (
         searchCriteria.city === '' &&
@@ -44,17 +45,27 @@ const ListingsPage: React.FC = () => {
         searchCriteria.minBedrooms === '' &&
         searchCriteria.propertyType === ''
       ) {
+        console.log('Fetching all listings');
         return await getListings();
       }
 
       // Otherwise, search with criteria
-      return await searchListings({
-        city: searchCriteria.city !== '' ? searchCriteria.city : undefined,
-        minPrice: searchCriteria.minPrice !== '' ? parseInt(searchCriteria.minPrice) : undefined,
-        maxPrice: searchCriteria.maxPrice !== '' ? parseInt(searchCriteria.maxPrice) : undefined,
-        minBedrooms: searchCriteria.minBedrooms !== '' ? parseInt(searchCriteria.minBedrooms) : undefined,
-        propertyType: searchCriteria.propertyType !== '' ? searchCriteria.propertyType : undefined
-      });
+      console.log('Searching with criteria');
+      try {
+        const results = await searchListings({
+          city: searchCriteria.city !== '' ? searchCriteria.city : undefined,
+          minPrice: searchCriteria.minPrice !== '' ? parseInt(searchCriteria.minPrice) : undefined,
+          maxPrice: searchCriteria.maxPrice !== '' ? parseInt(searchCriteria.maxPrice) : undefined,
+          minBedrooms: searchCriteria.minBedrooms !== '' ? parseInt(searchCriteria.minBedrooms) : undefined,
+          propertyType: searchCriteria.propertyType !== '' ? searchCriteria.propertyType : undefined
+        });
+        console.log('Search results:', results);
+        return results;
+      } catch (error) {
+        console.error('Search error:', error);
+        // Return empty array instead of throwing to show "no results" message
+        return [];
+      }
     },
     {
       // Add error handling
@@ -69,6 +80,7 @@ const ListingsPage: React.FC = () => {
   );
 
   const handleSearch = (criteria: SearchCriteriaType): void => {
+    console.log('Search criteria received in ListingsPage:', criteria);
     setSearchCriteria(criteria);
   };
 

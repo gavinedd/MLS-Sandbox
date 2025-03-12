@@ -32,6 +32,7 @@ const ListingSearch: React.FC<ListingSearchProps> = ({ onSearch }) => {
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
+    console.log('Search criteria submitted:', criteria);
     onSearch(criteria);
   };
 
