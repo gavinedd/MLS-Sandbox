@@ -1,64 +1,123 @@
-<div align="center">
+# Mock MLS (Multiple Listing Service)
 
-![][logo-url]
+A mock MLS system that allows external websites to push real estate listings via an API. Built with React, Vite, Tailwind CSS, DaisyUI, and Firebase.
 
-**Start your next React project in seconds.**\
-**[See the demo][deployment]**
+## Features
 
-![][release]
-![][build]
-![][eslint&prettier]
-![][last-commit]
-![][closed-prs]
-![][dependabot]
+- **Property Listings Display**: Modern UI with responsive DaisyUI cards
+- **Search & Filter**: Find properties by price, bedrooms, location, etc.
+- **Detailed Property View**: Comprehensive property information with image gallery
+- **RESTful API**: External websites can push listings via API endpoints
+- **Firebase Integration**: Real-time data storage with Firestore
 
-An up to date template to build a modern, performant and developer friendly React project with essential libraries configured out-of-the-box. The [theme page][deployment] allows teams to rapidly prototype and preview a design system backed by daisyUI and TailwindCSS.
+## API Endpoints
 
-<img width="1440" alt="image" src="https://user-images.githubusercontent.com/67953260/217753335-3393e954-9c64-4cf0-9223-ac67459c671c.png">
+The following RESTful API endpoints are available for external websites to push listings:
 
-<br>
+- `POST /api/listings` - Create a new listing
+- `GET /api/listings` - Retrieve all listings
+- `GET /api/listings/{id}` - Fetch a specific listing
+- `PUT /api/listings/{id}` - Update an existing listing
+- `DELETE /api/listings/{id}` - Remove a listing
 
-</div>
+## Getting Started
 
-## ✨ Fast prototyping
+### Prerequisites
 
-See the [official docs](https://daisyui.com/docs/themes/) for a complete list of customisations.
+- Node.js (v14 or later)
+- Firebase account
 
-https://user-images.githubusercontent.com/67953260/224526737-68b7f3fa-5303-4667-9d0f-ace146361c7b.mp4
+### Installation
 
-## 🌼 Features
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/mock-mls.git
+   cd mock-mls
+   ```
 
-- React 18 with TypeScript
-- Vite + SWC
-- GitHub Actions to build, test, deploy, and maintain your project
-- DaisyUI and TailwindCSS with [theme page][deployment]
-- Prettier and ESLint
-- Yarn
-- React Query and more...
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
 
-See [open issues](https://github.com/nathanhettige/daisyui-starterkit/issues) for new features in development.
+3. Create a `.env` file in the root directory with your Firebase configuration:
+   ```
+   VITE_FIREBASE_API_KEY=your-api-key
+   VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
+   VITE_FIREBASE_PROJECT_ID=your-project-id
+   VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+   VITE_FIREBASE_APP_ID=your-app-id
+   VITE_FIREBASE_MEASUREMENT_ID=your-measurement-id
+   ```
 
-## 🚀 Quick Start
+4. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-[Create a new repository](https://github.com/nathanhettige/daisyui-starterkit/generate) using this template. Clone it down and open a terminal at the root of the project.
+5. Open your browser and navigate to `http://localhost:5173`
 
-```bash
-> yarn install
-> yarn dev
+## Firebase Setup
+
+1. Create a new Firebase project at [https://console.firebase.google.com/](https://console.firebase.google.com/)
+2. Enable Firestore Database
+3. Set up Authentication (optional)
+4. Add a web app to your Firebase project
+5. Copy the Firebase configuration to your `.env` file
+
+## Deployment
+
+### Deploying to Vercel
+
+1. Push your code to a GitHub repository
+2. Sign up for a Vercel account at [https://vercel.com/](https://vercel.com/)
+3. Import your GitHub repository
+4. Add your environment variables (Firebase configuration)
+5. Deploy
+
+### Deploying to Netlify
+
+1. Push your code to a GitHub repository
+2. Sign up for a Netlify account at [https://www.netlify.com/](https://www.netlify.com/)
+3. Import your GitHub repository
+4. Configure the build settings:
+   - Build command: `npm run build` or `yarn build`
+   - Publish directory: `dist`
+5. Add your environment variables (Firebase configuration)
+6. Deploy
+
+## Project Structure
 
 ```
+mock-mls/
+├── src/
+│   ├── api/                 # API handlers
+│   ├── components/          # React components
+│   ├── firebase/            # Firebase configuration
+│   ├── pages/               # Page components
+│   ├── services/            # Service layer for data access
+│   ├── types/               # TypeScript type definitions
+│   ├── App.tsx              # Main App component
+│   ├── main.tsx             # Entry point
+│   └── router.tsx           # Routing configuration
+├── public/                  # Static assets
+├── .env                     # Environment variables
+└── package.json             # Project dependencies
+```
 
-<br>
-<div align="center">
-(づ ᴗ _ᴗ)づ Made with love ♡
-</div>
+## License
 
-[closed-prs]: https://flat.badgen.net/github/closed-prs/nathanhettige/daisyui-starterkit
-[build]: https://img.shields.io/github/actions/workflow/status/nathanhettige/daisyui-starterkit/build.yml?label=build&logo=vite&logoColor=%23FFFFFF&style=flat-square
-[dependabot]: https://flat.badgen.net/github/dependabot/ubuntu/yaru
-[deployment]: https://nathanhettige.github.io/daisyui-starterkit
-[eslint&prettier]: https://img.shields.io/github/actions/workflow/status/nathanhettige/daisyui-starterkit/lint.yml?label=ESLint%20%26%20Prettier&logo=ESLint&style=flat-square
-[logo-url]: ./public/Logo.svg
-[last-commit]: https://flat.badgen.net/github/last-commit/nathanhettige/daisyui-starterkit/main
-[open-issues]: https://flat.badgen.net/github/open-issues/nathanhettige/daisyui-starterkit
-[release]: https://flat.badgen.net/github/release/nathanhettige/daisyui-starterkit
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [DaisyUI](https://daisyui.com/)
+- [Firebase](https://firebase.google.com/)
