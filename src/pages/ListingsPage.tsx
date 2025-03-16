@@ -111,13 +111,13 @@ const ListingsPage: React.FC = () => {
   };
 
   const confirmDelete = async (): Promise<void> => {
-    if (listingToDelete?.id) {
+    if (listingToDelete?.id !== undefined && listingToDelete?.id !== '') {
       try {
         await deleteListing(listingToDelete.id);
         setIsDeleteConfirmOpen(false);
         setListingToDelete(null);
         // Refetch listings to update the UI
-        refetch();
+        await refetch();
       } catch (error) {
         console.error('Error deleting listing:', error);
         // You could add error handling UI here
@@ -138,7 +138,7 @@ const ListingsPage: React.FC = () => {
 
   const handleFormSubmit = async (listingData: Omit<Listing, 'id'>): Promise<void> => {
     try {
-      if (isEditMode && listingToEdit?.id) {
+      if (isEditMode && listingToEdit !== null && listingToEdit.id !== undefined && listingToEdit.id !== '') {
         // Update existing listing
         await updateListing(listingToEdit.id, listingData);
       } else {
@@ -149,7 +149,7 @@ const ListingsPage: React.FC = () => {
       setIsEditMode(false);
       setListingToEdit(null);
       // Refetch listings to show the changes
-      refetch();
+      await refetch();
     } catch (error) {
       console.error('Error saving listing:', error);
       // You could add error handling UI here
@@ -160,7 +160,7 @@ const ListingsPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
         <h1 className="text-3xl font-bold mb-4 md:mb-0">Property Listings</h1>
-        <button 
+        <button
           className="btn btn-primary"
           onClick={handleAddListingClick}
         >
@@ -202,7 +202,7 @@ const ListingsPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map((listing) => (
             <ListingCard
-              key={listing.id || Math.random().toString()}
+              key={listing.id !== undefined && listing.id !== '' ? listing.id : Math.random().toString()}
               listing={listing}
               onClick={handleCardClick}
               onEdit={handleEditListing}
@@ -225,8 +225,10 @@ const ListingsPage: React.FC = () => {
           <div className="bg-base-100 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-1">
               <ListingForm
-                initialData={isEditMode ? listingToEdit || {} : {}}
-                onSubmit={handleFormSubmit}
+                initialData={isEditMode && listingToEdit !== null ? listingToEdit : {}}
+                onSubmit={(data) => {
+                  void handleFormSubmit(data);
+                }}
                 onCancel={handleFormCancel}
               />
             </div>
@@ -242,7 +244,7 @@ const ListingsPage: React.FC = () => {
             <p className="py-4">
               Are you sure you want to delete the listing at{' '}
               <span className="font-semibold">
-                {listingToDelete?.streetAddress}, {listingToDelete?.city}
+                {listingToDelete?.streetAddress ?? ''},{listingToDelete?.city ?? ''}
               </span>
               ? This action cannot be undone.
             </p>
@@ -250,7 +252,12 @@ const ListingsPage: React.FC = () => {
               <button className="btn btn-outline" onClick={cancelDelete}>
                 Cancel
               </button>
-              <button className="btn btn-error" onClick={confirmDelete}>
+              <button
+                className="btn btn-error"
+                onClick={() => {
+                  void confirmDelete();
+                }}
+              >
                 Delete
               </button>
             </div>

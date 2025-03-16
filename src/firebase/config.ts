@@ -1,5 +1,7 @@
-import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import type { FirebaseApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import type { Firestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -16,14 +18,15 @@ const firebaseConfig = {
 // Check if Firebase config is properly set
 const isFirebaseConfigValid = (): boolean => {
   const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
-  
+
   for (const field of requiredFields) {
-    if (!firebaseConfig[field as keyof typeof firebaseConfig]) {
+    const value = firebaseConfig[field as keyof typeof firebaseConfig];
+    if (value === undefined || value === null || value === '') {
       console.error(`Firebase configuration is missing required field: ${field}`);
       return false;
     }
   }
-  
+
   return true;
 };
 
@@ -39,12 +42,14 @@ try {
   } else {
     console.error('Firebase initialization skipped due to invalid configuration');
     // Create a mock db object for development if Firebase is not configured
-    db = {} as Firestore;
+    // Using type assertion is necessary here as we can't create a full Firestore implementation
+    db = {} as unknown as Firestore;
   }
 } catch (error) {
   console.error('Error initializing Firebase:', error);
   // Create a mock db object for development if Firebase initialization fails
-  db = {} as Firestore;
+  // Using type assertion is necessary here as we can't create a full Firestore implementation
+  db = {} as unknown as Firestore;
 }
 
 export { db };

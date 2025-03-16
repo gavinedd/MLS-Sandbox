@@ -7,16 +7,14 @@ import {
   deleteListing
 } from '../services/listingService';
 
-// Base API URL
-const API_BASE_URL = '/api/listings';
-
 // API endpoints
 export const ListingApi = {
   // Create a new listing
   createListing: async (listing: Omit<Listing, 'id'>): Promise<Listing> => {
     try {
       const id = await createListing(listing);
-      return { id, ...listing } as Listing;
+      const newListing: Listing = { id, ...listing };
+      return newListing;
     } catch (error) {
       console.error('Error creating listing:', error);
       throw error;
@@ -74,27 +72,27 @@ export const handleExternalApiRequest = async (
 
   switch (method) {
     case 'GET':
-      if (id && id !== 'listings') {
+      if (typeof id === 'string' && id !== '' && id !== 'listings') {
         return await ListingApi.getListingById(id);
       } else {
         return await ListingApi.getListings();
       }
 
     case 'POST':
-      if (data) {
+      if (data !== undefined && data !== null) {
         return await ListingApi.createListing(data);
       }
       throw new Error('No data provided for POST request');
 
     case 'PUT':
-      if (id && data) {
+      if (typeof id === 'string' && id !== '' && data !== undefined && data !== null) {
         await ListingApi.updateListing(id, data);
         return { success: true, message: `Listing ${id} updated successfully` };
       }
       throw new Error('Invalid PUT request: missing ID or data');
 
     case 'DELETE':
-      if (id) {
+      if (typeof id === 'string' && id !== '') {
         await ListingApi.deleteListing(id);
         return { success: true, message: `Listing ${id} deleted successfully` };
       }
