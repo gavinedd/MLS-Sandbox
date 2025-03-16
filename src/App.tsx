@@ -13,11 +13,6 @@ function App() {
             View Listings
           </button>
         </Link>
-        <Link to="/theme">
-          <button className="text-md btn-secondary btn w-full">
-            Theme Settings
-          </button>
-        </Link>
       </div>
     </div>
   );
