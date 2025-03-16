@@ -64,6 +64,10 @@ const navLinks: Array<{
   {
     title: 'About',
     path: './'
+  },
+  {
+    title: 'API Documentation',
+    path: './api-docs'
   }
 ];
 

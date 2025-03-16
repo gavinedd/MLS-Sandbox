@@ -9,9 +9,11 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "prettier:fix": "prettier --write .",
+    "api": "node src/server/startApiServer.js"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "firebase": "^11.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -34,6 +36,7 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
+    "netlify-cli": "^19.0.2",
     "postcss": "^8.4.27",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.4.1",

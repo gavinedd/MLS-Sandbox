@@ -13,6 +13,11 @@ function App() {
             View Listings
           </button>
         </Link>
+        <Link to="/api-docs">
+          <button className="text-md btn-secondary btn w-full">
+            API Documentation
+          </button>
+        </Link>
       </div>
     </div>
   );

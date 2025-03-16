@@ -3,8 +3,9 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 
-/* Code split listings page */
+/* Code split pages */
 const ListingsPage = lazy(async () => await import('./pages/ListingsPage'));
+const ApiDocsPage = lazy(async () => await import('./pages/ApiDocsPage'));
 
 const Router = () => {
   const router = createBrowserRouter(
@@ -18,6 +19,14 @@ const Router = () => {
         element: (
           <Suspense fallback={<PageLoading />}>
             <ListingsPage />
+          </Suspense>
+        )
+      },
+      {
+        path: '/api-docs',
+        element: (
+          <Suspense fallback={<PageLoading />}>
+            <ApiDocsPage />
           </Suspense>
         )
       }
